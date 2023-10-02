@@ -2,13 +2,16 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
 struct Regexp {
   int type;
   int ch;
-  int n;// nparen
+  int n;
   struct Regexp* left;
   struct Regexp* right;
 };
+
+// правила преобразования
 enum {
   Lit = 1,
   Cat,
@@ -19,10 +22,11 @@ enum {
   Quest,
   Dot,
 };
+
 struct Inst {
   int opcode;
   int c;
-  int n;// nparen
+  int n;
   struct Inst* x;
   struct Inst* y;
   int gen;
@@ -42,11 +46,13 @@ struct Prog {
   struct Inst* start;
   int len;
 };
+
 #define MAXSUB 20
 struct Sub {
   int ref;
   char* sub[MAXSUB];
 };
+
 struct Sub* newsub(void);
 void incref(struct Sub*);
 void decref(struct Sub*);

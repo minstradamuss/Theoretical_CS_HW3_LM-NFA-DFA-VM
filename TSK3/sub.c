@@ -34,6 +34,7 @@ struct Sub* s1;
   return s;
 }
 
+// тесты
 void test_sub_ref(void) {
   struct Sub* s = newsub();
   assert(0 == s->ref);
