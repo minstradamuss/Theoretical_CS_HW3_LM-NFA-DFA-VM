@@ -13,6 +13,8 @@ struct Prog* compile(struct Regexp* re) {
   p->len = pc - p->start;
   return p;
 }
+
+
 void emit(struct Regexp* re) {
   struct Inst *p1, *p2;
   switch(re->type) {
@@ -79,6 +81,8 @@ void emit(struct Regexp* re) {
       break;
   }
 }
+
+// вывод
 void print_prog(struct Prog* p) {
   struct Inst *pc, *end;
   end = p->start + p->len;
@@ -119,7 +123,7 @@ void print_prog(struct Prog* p) {
   }
 }
 
-
+// вывод программы через строки
 static void prog_to_str(char* str, struct Prog* p) {
   struct Inst *pc, *end;
   end = p->start + p->len;

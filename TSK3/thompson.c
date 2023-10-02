@@ -1,3 +1,4 @@
+// алгоритм Томпсона
 #include "regexp.h"
 static int gen;
 struct Thread {
@@ -16,7 +17,6 @@ struct ThreadList* threadlist(int len) {
 }
 static void addthread(struct ThreadList* l, struct Thread t) {
   if(t.pc->gen == gen) {
-//    printf("gen=%d\n", gen);
     return;
   } else {
     t.pc->gen = gen;
@@ -61,11 +61,9 @@ int is_match_thompson(struct Prog* prog, char* input, char** subp) {
         case Char:
           if(*sp != pc->c)
             break;
-         // printf("%c", *sp);
 	case Any:
 	  if(*sp == '\0')
 	    break;
-         // printf("%c", *sp);
           addthread(nlist, thread(pc+1));
           break;
         case Match:
@@ -74,7 +72,6 @@ int is_match_thompson(struct Prog* prog, char* input, char** subp) {
           goto BreakFor;
        }
      }
-   // printf("\n");
     BreakFor:
              tlist = clist;
 	     clist = nlist;
@@ -88,6 +85,7 @@ int is_match_thompson(struct Prog* prog, char* input, char** subp) {
             return 0;
 }
 
+// тесты
 static void test_add_thread(void) {
   struct Regexp* re = parse("abcd");
   struct Prog* prog = compile(re);
@@ -113,11 +111,7 @@ assert(Char == list->t[3].pc->opcode);
 
 static void test_dot(void) {
   struct Regexp* re = parse("a.+");
-  //char buf[80];
-  //reg_to_str(buf, re);
-  //printf("%s\n", buf);
   struct Prog* prog = compile(re);
-  //print_prog(prog);
   char* sub[MAXSUB];
   assert(!is_match_thompson(prog, "a", sub));
   char* input = "aa";

@@ -65,7 +65,6 @@ int is_match_pike(struct Prog* prog,char* input, char** subp) {
             decref(sub);
 	    break;
 	  }
-          //printf("%c", pc->c);
 	case Any:
 	  if(*sp == '\0') {
 	    decref(sub);
@@ -83,7 +82,6 @@ int is_match_pike(struct Prog* prog,char* input, char** subp) {
 	  goto BreakFor;
        }
      }
-    //printf("\n");
     BreakFor:
              tlist = clist;
 	     clist = nlist;
@@ -97,6 +95,7 @@ int is_match_pike(struct Prog* prog,char* input, char** subp) {
             return 0;
 }
 
+// тесты
 static void test_add_thread(void) {
   char input[] = "ab";
   struct Regexp* re = parse(input);
@@ -133,21 +132,6 @@ static void test_submatch(void) {
   *pbuf = '\0';
   assert(!strcmp("oo", buf));
 }
-/*
-static void test_alt(void) {
-  struct Regexp* re = parse("(.+)world");
-  struct Prog* prog = compile(re);
-  char* sub[MAXSUB];
-  char str[] = "helloworld";
-  assert(is_match_pike(prog, str, sub));
-  char buf[80], *pbuf;
-  pbuf = buf;
-  char* p = str;
-  while(p != sub[1])
-    *pbuf++ = *p++;
-  *pbuf = '\0';
-  assert(!strcmp("hello", buf));
-}*/
 
 void test_pike(void) {
   test_add_thread();  

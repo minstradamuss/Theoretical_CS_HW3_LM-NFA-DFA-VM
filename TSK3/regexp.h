@@ -27,7 +27,8 @@ struct Inst {
   struct Inst* y;
   int gen;
 };
-// opcode
+
+// основные инструкции
 enum {
   Char = 1,
   Split,
@@ -36,6 +37,7 @@ enum {
   Any,
   Match,
 };
+
 struct Prog {
   struct Inst* start;
   int len;
@@ -55,7 +57,8 @@ int re_size(void);
 int is_match_thompson(struct Prog*,char*, char**);
 int is_match_pike(struct Prog*,char*, char**);
 struct Prog* compile(struct Regexp* re);
-// for testing
+
+// для тестов
 void test_thompson(void);
 void test_sub(void);
 void test_pike(void);
