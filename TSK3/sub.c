@@ -7,7 +7,7 @@ struct Sub* newsub(void) {
     s = malloc(sizeof(struct Sub));
   else {
     s = freesub;
-    freesub = (struct Sub*)freesub->sub[0]; // freesub -> prev freesub
+    freesub = (struct Sub*)freesub->sub[0];
   }
   s->ref = 0;
   return s;
@@ -17,7 +17,6 @@ void incref(struct Sub* s) {
 }
 void decref(struct Sub* s) {
   if(--s->ref == 0) {
-    // new freesub has a previous  freesub in the field of sub[0]
     s->sub[0] = (char*)freesub;
     freesub = s;
   }

@@ -1,20 +1,25 @@
 #include "regexp.h"
 static int gen;
+
 struct Thread {
   struct Inst* pc;
   struct Sub* sub;
 };
+
 static struct Thread thread(struct Inst* pc, struct Sub* sub) {
 struct Thread t = {pc, sub};
   return t;
 }
+
 struct ThreadList {
   int n;
   struct Thread t[1];
 };
+
 static struct ThreadList* threadlist(int len) {
   return malloc(sizeof(struct ThreadList) + len * sizeof(struct Thread));
 }
+
 static void addthread(struct ThreadList* l, struct Thread t, char* sp) {
   if(t.pc->gen == gen)
     return;
