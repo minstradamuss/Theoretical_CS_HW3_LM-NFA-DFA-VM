@@ -1,0 +1,4 @@
+Запустить просто Run в IDLE и при этом запускать нужно файл main.py
+
+Потом программа выводит: Enter the name of the NFA file: test1.txt (вводим название файла с данными)
+                         Enter the name of the output file: output1.txt (пишем название файла, куда хотим вывести)

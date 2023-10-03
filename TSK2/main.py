@@ -22,9 +22,9 @@ def main():
 
     output_filename = input('Enter the name of the output file: ')
     with open(output_filename, 'w') as output_file:
-        sys.stdout = output_file  # Redirect stdout to the output file
-        dfa.print_dfa()  # This will write the output to the file
-        sys.stdout = sys.__stdout__  # Reset stdout to the default value
+        sys.stdout = output_file
+        dfa.print_dfa()
+        sys.stdout = sys.__stdout__ # we checked that the program output and the text file matched, and overwritten the data
 
     print("Output has been written to", output_filename)
 
