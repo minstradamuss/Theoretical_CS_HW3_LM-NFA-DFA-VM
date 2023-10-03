@@ -1,12 +1,13 @@
 #include "regexp.h"
 struct Sub* freesub;
+
 struct Sub* newsub(void) {
   struct Sub* s;
   if(freesub == NULL)
     s = malloc(sizeof(struct Sub));
   else {
     s = freesub;
-    freesub = (struct Sub*)freesub->sub[0];// freesub -> prev freesub
+    freesub = (struct Sub*)freesub->sub[0]; // freesub -> prev freesub
   }
   s->ref = 0;
   return s;
@@ -21,6 +22,8 @@ void decref(struct Sub* s) {
     freesub = s;
   }
 }
+
+// обновление подстроки
 struct Sub* update(struct Sub* s, int i, char* c) {
 struct Sub* s1;
   if(s->ref > 1) {

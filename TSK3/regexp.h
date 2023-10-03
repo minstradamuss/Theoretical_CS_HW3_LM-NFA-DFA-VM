@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// структура для представления регулярных выражений
 struct Regexp {
   int type;
   int ch;
@@ -23,6 +24,7 @@ enum {
   Dot,
 };
 
+// структура для представления инструкций в программе
 struct Inst {
   int opcode;
   int c;
@@ -32,7 +34,7 @@ struct Inst {
   int gen;
 };
 
-// основные инструкции
+// операции для инструкций
 enum {
   Char = 1,
   Split,
@@ -42,12 +44,15 @@ enum {
   Match,
 };
 
+// представление программы
 struct Prog {
   struct Inst* start;
   int len;
 };
 
 #define MAXSUB 20
+
+// представление подстроки
 struct Sub {
   int ref;
   char* sub[MAXSUB];

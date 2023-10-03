@@ -2,6 +2,7 @@
 #include <string.h>
 static struct Inst* pc;
 void emit(struct Regexp* re);
+
 struct Prog* compile(struct Regexp* re) {
   struct Prog* p;
   p = malloc(sizeof(*p) + (re_size()+1) * sizeof(p->start[0]));
@@ -123,7 +124,7 @@ void print_prog(struct Prog* p) {
   }
 }
 
-// вывод программы через строки
+// вывод инструкций через строки
 static void prog_to_str(char* str, struct Prog* p) {
   struct Inst *pc, *end;
   end = p->start + p->len;
@@ -219,6 +220,9 @@ void reg_to_str(char* str, struct Regexp* re) {
   }
 }
 
+
+
+// тесты
 void test(void);
 int main(int argc, char* argv[]) {
   if(argc == 2 && !strcmp(argv[1], "test")) {

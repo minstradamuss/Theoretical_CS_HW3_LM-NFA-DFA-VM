@@ -1,4 +1,5 @@
 // алгоритм Томпсона
+
 #include "regexp.h"
 static int gen;
 struct Thread {
@@ -12,9 +13,11 @@ struct ThreadList {
   int n;
   struct Thread t[1];
 };
+
 struct ThreadList* threadlist(int len) {
   return malloc(sizeof(struct ThreadList) + len * sizeof(struct Thread));
 }
+
 static void addthread(struct ThreadList* l, struct Thread t) {
   if(t.pc->gen == gen) {
     return;
@@ -37,6 +40,8 @@ static void addthread(struct ThreadList* l, struct Thread t) {
       break;
   }
 }
+
+// проверка на совпадение регулярного выражения и строки
 int is_match_thompson(struct Prog* prog, char* input, char** subp) {
   char* sp;
   struct Inst* pc;
@@ -189,6 +194,6 @@ void test_thompson(void) {
   test_quest();
   test_is_match_thompson_concat();
   test_is_match_thompson_plus();
-  test_is_match_thompson_star();  
+  test_is_match_thompson_star();
   test_is_match_thompson_paren();
 }
