@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SampleTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2023-10-04T19:40:21" hostname="DESKTOP-9O75TRD" time="0.08">
+  <properties/>
+  <testcase name="test_DFA_1()" classname="SampleTest" time="0.035"/>
+  <testcase name="test_DFA_2()" classname="SampleTest" time="0.002"/>
+  <testcase name="test_DFA_3()" classname="SampleTest" time="0.024"/>
+  <testcase name="test_DFA_4()" classname="SampleTest" time="0.001"/>
+  <testcase name="test_NFA_1()" classname="SampleTest" time="0.002"/>
+  <testcase name="test_NFA_2()" classname="SampleTest" time="0.002"/>
+  <testcase name="test_NFA_3()" classname="SampleTest" time="0.001"/>
+  <testcase name="test_NFA_4()" classname="SampleTest" time="0.002"/>
+  <testcase name="test_NFA_5()" classname="SampleTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
