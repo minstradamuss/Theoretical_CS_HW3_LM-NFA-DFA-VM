@@ -4,7 +4,7 @@ def NFA(file, word):
     with open(file) as automata:
         nrStates = int(automata.readline())
         alphabet = automata.readline().split()
-        initialState = int(automata.readline())
+        initialState = 0
         finalStates = [int(x) for x in automata.readline().split()]
         # input validation
         if not inputValidation(alphabet, word):
@@ -14,10 +14,10 @@ def NFA(file, word):
         # lambda word
         if word == "":
             if initialState in finalStates:
-                print("The word λ is accepted!")
+                print("True")
                 return
             else:
-                print("The word λ is rejected!")
+                print("False")
                 return
         # delta function
         delta = {}
@@ -68,8 +68,46 @@ def NFA(file, word):
         bkt(0, initialState)
 
         if sol == False:
-            print("Rejected!")
+            print("False")
+# чтобы попробовать свой ввод, нужно расскомментировать эти строчки
 
-word = input("Word = ")
-NFA("nfa2.txt", word)
-# check for abac
+#word = input("Word = ")
+#NFA("nfa2.txt", word)
+
+def run_tests():
+    test_cases = [
+        ("0101", False),
+        ("001", False),
+        ("", False),
+        ("1010101010101010", True),
+        ("11111", False)
+    ]
+
+    for idx, (word, expected_output) in enumerate(test_cases, 1):
+        print(f"Running Test #{idx} with input word: '{word}'")
+        try:
+            NFA("nfa1.txt", word)
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            continue
+        print(f"Expected Output: {expected_output}")
+        print("=" * 30)
+
+    test_cases2 = [
+        ("aaaa", False),
+        ("bab", False),
+        ("aabbb", False),
+        ("ababab", False)
+    ]
+
+    for idx, (word, expected_output) in enumerate(test_cases2, 1):
+        print(f"Running Test #{idx} with input word: '{word}'")
+        try:
+            NFA("nfa2.txt", word)
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            continue
+        print(f"Expected Output: {expected_output}")
+        print("=" * 30)
+
+run_tests()
