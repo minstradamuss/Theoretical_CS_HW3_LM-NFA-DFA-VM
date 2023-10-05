@@ -1,7 +1,8 @@
+import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class Task1 {
-
     fun testString (args : Array<String>) : Boolean {
         val path : String = args[0]
         val file = File(path)
@@ -11,45 +12,87 @@ class Task1 {
         val start: Set<Int>
         val finish: Set<Int>
         val go : Array<Array<MutableSet<Int>>>
-        file.bufferedReader().use {reader ->
+        file.bufferedReader().use { reader ->
             n = reader.readLine().toInt()
             m = reader.readLine().toInt()
-
-            start = reader.readLine().split(" ").map {it.toInt()}.toSet()
-            finish = reader.readLine().split(" ").map {it.toInt()}.toSet()
+            start = reader.readLine().split(" ").map { it.toInt() }.toSet()
+            finish = reader.readLine().split(" ").map { it.toInt() }.toSet()
 
             go = Array(n) {
                 Array(m) {
-                    emptySet<Int>().toMutableSet()
+                    mutableSetOf<Int>()
                 }
             }
 
-            while(true) {
+            while (true) {
                 try {
-                    val splitted: List<Int> = reader.readLine().split(" ").map {it.toInt()}
-                    val from : Int = splitted[0]
-                    val symbol : Int = splitted[1]
-                    val to : Int = splitted[2]
+                    val (from, symbol, to) = reader.readLine().split(" ").map { it.toInt() }
                     go[from][symbol].add(to)
-                } catch (e : Exception) {
+                } catch (e: Exception) {
                     break
                 }
             }
         }
 
-        var states : Set<Int> = start
-        for (symbol in inputString) {
-            val realSymbol : Int = symbol - '0'
+        var states: Set<Int> = start
 
-            val newStates = emptySet<Int>().toMutableSet()
-            states.forEach {
-                newStates.addAll(go[it][realSymbol])
+        inputString.forEach { symbol ->
+            val realSymbol: Int = symbol - '0'
+            states = states.fold(emptySet()) { acc, state ->
+                acc.plus(go[state][realSymbol])
             }
-            states = newStates
         }
 
-        return states.intersect(finish.toSet()).isNotEmpty()
+        return states.intersect(finish).isNotEmpty()
     }
 }
 
-fun main() { /.../ }
+class Task1Test {
+
+    private val sample = Task1()
+
+    private val nfaFilePath = "src/test/kotlin/test1.txt"
+    private val dfaFilePath = "src/test/kotlin/test2.txt"
+
+    @Test
+    fun test_NFA_1() {
+        val expected = true
+        val result = sample.testString(arrayOf(nfaFilePath, "00111111100"))
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun test_NFA_2() {
+        val expected = true
+        val result = sample.testString(arrayOf(nfaFilePath, "111111111100"))
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun test_NFA_3() {
+        val expected = false
+        val result = sample.testString(arrayOf(nfaFilePath, "111111111"))
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun test_DFA_1() {
+        val expected = true
+        val result = sample.testString(arrayOf(dfaFilePath, "022220"))
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun test_DFA_2() {
+        val expected = true
+        val result = sample.testString(arrayOf(dfaFilePath, "2111111220"))
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun test_DFA_3() {
+        val expected = false
+        val result = sample.testString(arrayOf(dfaFilePath, "000101010102"))
+        assertEquals(expected, result)
+    }
+}
