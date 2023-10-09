@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ad063972-02be-464e-adf4-b8e3ecca33cb" name="Changes" comment="" />
+    <list default="true" id="ad063972-02be-464e-adf4-b8e3ecca33cb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/expected_output1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/expected_output1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/expected_output2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/expected_output2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/output1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/output1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/output2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/output2.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/test1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/test1.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TSK1/src/test/kotlin/test2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/TSK1/src/test/kotlin/test2.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,7 +33,12 @@
       <state>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="TSK1" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -33,15 +51,22 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectId" id="2WNmy3DJhI4wpfyLy33qtNnwJoU" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "last_opened_file_path": "C:/Users/User/CLionProjects/Theoretical_CS_HW3/TSK1/settings.gradle.kts",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "C:/Users/User/CLionProjects/Theoretical_CS_HW3",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0"
   }
 }]]></component>
-  <component name="RunManager" selected="TestNG.NfaToDfaConverterTest">
+  <component name="RunManager" selected="TestNG.DFATest">
     <configuration type="JetRunConfigurationType" temporary="true">
       <option name="ALTERNATIVE_JRE_PATH" value="17" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -68,6 +93,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="DFATest" type="TestNG" temporary="true" nameIsGenerated="true">
+      <module name="TSK1.main" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="DFATest" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="NfaToDfaConverterTest" type="TestNG" temporary="true" nameIsGenerated="true">
       <module name="TSK1.main" />
       <option name="PACKAGE_NAME" value="" />
@@ -80,21 +116,29 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="Kotlin." />
       <item itemvalue="Kotlin.Task4Kt" />
       <item itemvalue="Kotlin.Task4Kt (1)" />
+      <item itemvalue="TestNG.DFATest" />
       <item itemvalue="TestNG.NfaToDfaConverterTest" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="TestNG.DFATest" />
         <item itemvalue="TestNG.NfaToDfaConverterTest" />
-        <item itemvalue="Kotlin." />
         <item itemvalue="Kotlin.Task4Kt (1)" />
         <item itemvalue="Kotlin.Task4Kt" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad063972-02be-464e-adf4-b8e3ecca33cb" name="Changes" comment="" />
+      <created>1696581666957</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1696581666957</updated>
+    </task>
     <servers />
   </component>
 </project>

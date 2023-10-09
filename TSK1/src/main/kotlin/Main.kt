@@ -2,125 +2,92 @@ import org.testng.Assert.assertEquals
 import org.testng.annotations.Test
 import java.io.File
 
-class DFA(val statesCount: Int, val alphabetSize: Int) {
-    val nodes = Array(statesCount) { DFANode(it, alphabetSize) }
-    var startState: Int? = null
-    var acceptingStates = mutableListOf<Int>()
+class DFA(val n: Int, val m: Int) {
+    val nodes = Array(n) { i -> DFANode(i, m) }
+    var startNode: Int? = null
+    var accNodes: MutableList<Int> = mutableListOf()
 
-    fun addTransition(from: Int, to: Int, inputSymbol: Int) {
-        nodes[from].addTransition(nodes[to], inputSymbol)
+    fun addLink(from: Int, to: Int, x: Int) {
+        nodes[from].addLink(nodes[to], x)
+    }
+
+}
+
+class DFANode(val i: Int, alphabetSize: Int) {
+    val link: Array<DFANode?> = Array(alphabetSize) {_ -> null}
+    fun addLink(to: DFANode, x: Int) {
+        link[x] = to
     }
 }
 
-class DFANode(val id: Int, private val alphabetSize: Int) {
-    val transitions = Array<DFANode?>(alphabetSize) { null }
 
-    fun addTransition(to: DFANode, inputSymbol: Int) {
-        transitions[inputSymbol] = to
-    }
-}
+fun readDFA(fileName: String): DFA {
+        val text = File(fileName).readLines()
 
-class NFA(val statesCount: Int, val alphabetSize: Int) {
-    val nodes = Array(statesCount) { NFANode(it, alphabetSize) }
-    var startStates = emptyList<Int>()
-    var acceptingStates = mutableListOf<Int>()
+        val dfa = DFA(text[0].toInt(), text[1].toInt())
 
-    fun addTransition(from: Int, to: Int, inputSymbol: Int) {
-        nodes[from].addTransition(nodes[to], inputSymbol)
-    }
+        dfa.startNode = text[2].split(" ").map { it.toInt() }[0]
+        dfa.accNodes = text[3].split(" ").map { it.toInt() }.toMutableList()
 
-    fun transformToDFA(): DFA {
-        val dfa = DFA(1 shl statesCount, alphabetSize)
-        for (mask in 0 until (1 shl statesCount)) {
-            for (symbol in 0 until alphabetSize) {
-                var toMask = 0
-                for (i in 0 until statesCount) {
-                    if ((mask shr i) and 1 == 1) {
-                        nodes[i].getTransitions(symbol).forEach { toMask = toMask or (1 shl it.id) }
-                    }
-                }
-                dfa.addTransition(mask, toMask, symbol)
-            }
-            for (i in 0 until statesCount) {
-                if ((mask shr i) and 1 == 1 && i in acceptingStates) {
-                    dfa.acceptingStates.add(mask)
-                }
-            }
+        for (i in 4..text.size-1) {
+            val row = text[i].split(" ").map { it.toInt() }
+            dfa.addLink(row[0], row[2], row[1])
         }
-        dfa.startState = startStates.fold(0) { startMask, s -> startMask or (1 shl s) }
+
         return dfa
     }
-}
 
-class NFANode(val id: Int, private val alphabetSize: Int) {
-    private val transitions = Array(alphabetSize) { mutableListOf<NFANode>() }
-
-    fun addTransition(to: NFANode, inputSymbol: Int) {
-        transitions[inputSymbol].add(to)
-    }
-
-    fun getTransitions(inputSymbol: Int) = transitions[inputSymbol]
-}
-
-fun readNFAFromFile(fileName: String): NFA {
-    val text = File(fileName).readLines()
-    val nfa = NFA(text[0].toInt(), text[1].toInt())
-    nfa.startStates = text[2].split(" ").mapNotNull { it.toInt() }
-    nfa.acceptingStates.addAll(text[3].split(" ").mapNotNull { it.toInt() })
-    for (i in 4 until text.size) {
-        val row = text[i].split(" ").mapNotNull { it.toInt() }
-        nfa.addTransition(row[0], row[2], row[1])
-    }
-    return nfa
-}
-
-fun writeDFAToFile(fileName: String, dfa: DFA) {
-    val file = File(fileName)
-    file.writeText("${dfa.statesCount}\n${dfa.alphabetSize}\n${dfa.startState}\n${dfa.acceptingStates.joinToString(" ")}\n")
-    for (node in dfa.nodes) {
-        for (i in node.transitions.indices) {
-            if (node.transitions[i] != null) {
-                file.appendText("${node.id} $i ${node.transitions[i]?.id}\n")
+fun writeDFA(fileName: String, dfa: DFA) {
+        File(fileName).appendText("${dfa.n}\n")
+        File(fileName).appendText("${dfa.m}\n")
+        File(fileName).appendText("${dfa.startNode}\n")
+        for (accNode in dfa.accNodes) {
+            File(fileName).appendText("$accNode ")
+        }
+        File(fileName).appendText("\n")
+        for (node in dfa.nodes) {
+            for (i in 0 until node.link.size) {
+                if (node.link[i] != null)
+                    File(fileName).appendText("${node.i} $i ${node.link[i]?.i}\n")
             }
         }
     }
-}
 
-class NfaToDfaConverterTest {
 
-    @Test
-    fun testNfaToDfaConversion1() {
-        val nfaFilePath = "src/test/kotlin/test1.txt"
-        val dfaFilePath = "src/test/kotlin/output1.txt"
-        val expectedDfaFilePath = "src/test/kotlin/expected_output1.txt"
-
-        val nfa = readNFAFromFile(nfaFilePath)
-        val dfa = nfa.transformToDFA()
-        writeDFAToFile(dfaFilePath, dfa)
-
-        val expectedLines = File(expectedDfaFilePath).readLines().map { it.trimEnd() }
-        val actualLines = File(dfaFilePath).readLines().map { it.trimEnd() }
-        for (i in expectedLines.indices) {
-            assertEquals(expectedLines[i], actualLines[i])
-        }
-    }
+class DFATest {
 
     @Test
-    fun testNfaToDfaConversion2() {
-        val nfaFilePath2 = "src/test/kotlin/test2.txt"
-        val dfaFilePath2 = "src/test/kotlin/output2.txt"
-        val expectedDfaFilePath2 = "src/test/kotlin/expected_output2.txt"
+    fun test1() {
+        val dfaFilePath1 = "src/test/kotlin/test1.txt"
+        val minDfaFilePath2 = "src/test/kotlin/output1.txt"
+        val expectedDfaFilePath2 = "src/test/kotlin/expected_output1.txt"
 
-        val nfa = readNFAFromFile(nfaFilePath2)
-        val dfa = nfa.transformToDFA()
-        writeDFAToFile(dfaFilePath2, dfa)
+        val dfa = readDFA(dfaFilePath1)
+        val minDFA = MooresAlgorithm(dfa)
+        writeDFA  (minDfaFilePath2, minDFA)
 
         val expectedLines = File(expectedDfaFilePath2).readLines().map { it.trimEnd() }
-        val actualLines = File(dfaFilePath2).readLines().map { it.trimEnd() }
+        val actualLines = File(minDfaFilePath2).readLines().map { it.trimEnd() }
+        for (i in expectedLines.indices) {
+            assertEquals(expectedLines[i], actualLines[i])
+        }
+    }
+
+    @Test
+    fun test2() {
+        val dfaFilePath1 = "src/test/kotlin/test2.txt"
+        val minDfaFilePath2 = "src/test/kotlin/output2.txt"
+        val expectedDfaFilePath2 = "src/test/kotlin/expected_output2.txt"
+
+        val dfa = readDFA(dfaFilePath1)
+        val minDFA = MooresAlgorithm(dfa)
+        writeDFA  (minDfaFilePath2, minDFA)
+
+        val expectedLines = File(expectedDfaFilePath2).readLines().map { it.trimEnd() }
+        val actualLines = File(minDfaFilePath2).readLines().map { it.trimEnd() }
         for (i in expectedLines.indices) {
             assertEquals(expectedLines[i], actualLines[i])
         }
     }
 }
-
-fun main() { }
+fun main() {  }
