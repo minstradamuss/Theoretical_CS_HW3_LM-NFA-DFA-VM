@@ -1,6 +1,10 @@
+launch: clean main.o  pike.o thompson.o sub.o y.tab.o regexp.h
+	gcc -o re main.o pike.o sub.o thompson.o y.tab.o
+	re thompson "d" "duck"
+	re thompson "d" "fuck"
 test: main.o  pike.o thompson.o sub.o y.tab.o regexp.h
 	gcc -o re main.o pike.o sub.o thompson.o y.tab.o
-	./re test
+	re test
 y.tab.o: parse.y regexp.h 
 	bison -y -v parse.y
 	gcc -c y.tab.c
@@ -12,3 +16,5 @@ sub.o: sub.c regexp.h
 	gcc -c sub.c
 pike.o: pike.c regexp.h
 	gcc -c pike.c
+clean:
+	rm -f *.o *.exe

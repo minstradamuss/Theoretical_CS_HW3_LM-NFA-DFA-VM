@@ -17,17 +17,18 @@ struct ThreadList {
 };
 
 static struct ThreadList* threadlist(int len) {
-  return malloc(sizeof(struct ThreadList) + len * sizeof(struct Thread));
+  struct ThreadList *res = malloc(sizeof(struct ThreadList) + len * sizeof(struct Thread));
+  res->n = 0;
+  return res; 
 }
 
 static void addthread(struct ThreadList* l, struct Thread t, char* sp) {
   if(t.pc->gen == gen)
     return;
+  printf("26\n");
   t.pc->gen = gen;
+  printf("%d\n", t.pc->opcode);
   switch(t.pc->opcode) {
-    default:
-      l->t[l->n++] = t;
-      break;
     case Split:
       incref(t.sub);
       addthread(l, thread(t.pc->x, t.sub), sp);
@@ -39,7 +40,13 @@ static void addthread(struct ThreadList* l, struct Thread t, char* sp) {
     case Save:
       addthread(l, thread(t.pc + 1, update(t.sub, t.pc->n-2, sp)), sp);
       break;
+    default:
+      printf("42");
+      l->t[l->n++] = t;
+      printf("44");
+      break;
   }
+  printf("44");
 }
 
 int is_match_pike(struct Prog* prog,char* input, char** subp) {
@@ -92,7 +99,7 @@ int is_match_pike(struct Prog* prog,char* input, char** subp) {
 	     clist = nlist;
 	     nlist = tlist;
 	     nlist->n = 0;
-	     if(sp == '\0')
+	     if(*sp == '\0')
 	       break;
   }
   if(matched)
