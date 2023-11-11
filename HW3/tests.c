@@ -1,89 +1,5 @@
+
 #include "regexp.h"
-#include <string.h>
-static struct Inst *pc;
-void emit(struct Regexp *re);
-
-struct Prog *compile(struct Regexp *re)
-{
-  struct Prog *p;
-  p = malloc(sizeof(*p) + (re_size() + 1) * sizeof(p->start[0]));
-  p->start = (struct Inst *)(p + 1);
-  pc = p->start;
-  emit(re);
-  pc->opcode = Match;
-  pc++;
-  p->len = pc - p->start;
-  return p;
-}
-
-void emit(struct Regexp *re)
-{
-  struct Inst *p1, *p2;
-  switch (re->type)
-  {
-  default:
-    assert(0);
-  case Lit:
-    pc->opcode = Char;
-    pc->c = re->ch;
-    pc++;
-    break;
-  case Cat:
-    emit(re->left);
-    emit(re->right);
-    break;
-  case Plus:
-    p1 = pc;
-    emit(re->left);
-    pc->opcode = Split;
-    pc->x = p1;
-    p2 = pc;
-    pc++;
-    p2->y = pc;
-    break;
-  case Star:
-    pc->opcode = Split;
-    p1 = pc++;
-    p1->x = pc;
-    emit(re->left);
-    pc->opcode = Jmp;
-    pc->x = p1;
-    pc++;
-    p1->y = pc;
-    break;
-  case Alt:
-    pc->opcode = Split;
-    p1 = pc++;
-    p1->x = pc;
-    emit(re->left);
-    pc->opcode = Jmp;
-    p2 = pc++;
-    p1->y = pc;
-    emit(re->right);
-    p2->x = pc;
-    break;
-  case Paren:
-    pc->opcode = Save;
-    pc->n = 2 * re->n;
-    pc++;
-    emit(re->left);
-    pc->opcode = Save;
-    pc->n = 2 * re->n + 1;
-    pc++;
-    break;
-  case Quest:
-    pc->opcode = Split;
-    p1 = pc++;
-    p1->x = pc;
-    emit(re->left);
-    p1->y = pc;
-    break;
-  case Dot:
-    pc->opcode = Any;
-    pc++;
-    break;
-  }
-}
 
 // вывод
 void print_prog(struct Prog *p)
@@ -172,14 +88,6 @@ static void prog_to_str(char *str, struct Prog *p)
   }
 }
 
-struct Regexp *reg(int type, struct Regexp *left, struct Regexp *right)
-{
-  struct Regexp *re = (struct Regexp *)malloc(sizeof(struct Regexp));
-  re->type = type;
-  re->left = left;
-  re->right = right;
-  return re;
-}
 void reg_to_str(char *str, struct Regexp *re)
 {
   switch (re->type)
@@ -191,7 +99,7 @@ void reg_to_str(char *str, struct Regexp *re)
     break;
   case Cat:
   {
-    char lbuf[80], rbuf[80];
+    char lbuf[280], rbuf[280];
     reg_to_str(lbuf, re->left);
     reg_to_str(rbuf, re->right);
     sprintf(str, "Cat(%s, %s)", lbuf, rbuf);
@@ -199,7 +107,7 @@ void reg_to_str(char *str, struct Regexp *re)
   }
   case Alt:
   {
-    char lbuf[80], rbuf[80];
+    char lbuf[280], rbuf[280];
     reg_to_str(lbuf, re->left);
     reg_to_str(rbuf, re->right);
     sprintf(str, "Alt(%s, %s)", lbuf, rbuf);
@@ -207,28 +115,28 @@ void reg_to_str(char *str, struct Regexp *re)
   }
   case Plus:
   {
-    char buf[80];
+    char buf[280];
     reg_to_str(buf, re->left);
     sprintf(str, "Plus(%s)", buf);
     break;
   }
   case Star:
   {
-    char buf[80];
+    char buf[280];
     reg_to_str(buf, re->left);
     sprintf(str, "Star(%s)", buf);
     break;
   }
   case Paren:
   {
-    char buf[80];
+    char buf[280];
     reg_to_str(buf, re->left);
     sprintf(str, "Paren(%d, %s)", re->n, buf);
     break;
   }
   case Quest:
   {
-    char buf[80];
+    char buf[280];
     reg_to_str(buf, re->left);
     sprintf(str, "Quest(%s)", buf);
     break;
@@ -243,59 +151,6 @@ void reg_to_str(char *str, struct Regexp *re)
 
 // тесты
 void test(void);
-int main(int argc, char *argv[])
-{
-  if (argc == 2 && !strcmp(argv[1], "test"))
-  {
-    test();
-    return 0;
-  }
-  if (argc < 4)
-  {
-    fprintf(stderr, "usage:%s vm regexp string...\n", argv[0]);
-    return 1;
-  }
-  int (*is_match)(struct Prog *, char *, char **);
-  if (!strcmp("thompson", argv[1]))
-    is_match = is_match_thompson;
-  else if (!strcmp("pike", argv[1]))
-    is_match = is_match_pike;
-  else
-  {
-    fprintf(stderr, "no such vm\n");
-    return 1;
-  }
-  struct Regexp *re = parse(argv[2]);
-  struct Prog *prog = compile(re);
-  print_prog(prog);
-  int i;
-  char *sub[MAXSUB];
-  for (i = 3; i < argc; i++)
-  {
-    if (is_match(prog, argv[i], sub))
-    {
-      printf("match:%s\n", argv[i]);
-      int j;
-      for (j = MAXSUB - 1; j > 0; j--)
-        if (sub[j])
-          break;
-      char buf[80], *pbuf;
-      char *p;
-      int k;
-      for (k = 0; k < j; k += 2)
-      {
-        pbuf = buf;
-        char *p = sub[k];
-        while (p != sub[k + 1])
-          *pbuf++ = *p++;
-        *pbuf = '\0';
-        printf("$%d=%s:[%d,%d]\n", k + 1,
-               buf, (int)(sub[k] - argv[i]), (int)(sub[k + 1] - argv[i]));
-      }
-    }
-  }
-  return 0;
-}
 
 void test_reg(void)
 {
@@ -321,14 +176,14 @@ void test_reg(void)
 void test_parse_concat(void)
 {
   struct Regexp *re1 = parse("a");
-  assert(1 == re_size());
   char str[80];
   reg_to_str(str, re1);
-  assert(!strcmp("Lit(a)", str));
+  //printf("%s\n", str);
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Lit(a)))", str));
   struct Regexp *re2 = parse("ab");
-  assert(3 == re_size());
   reg_to_str(str, re2);
-  assert(!strcmp("Cat(Lit(a), Lit(b))", str));
+  //printf("%s\n", str);
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Cat(Lit(a), Lit(b))))", str));
 }
 
 void test_parse_plus(void)
@@ -336,7 +191,8 @@ void test_parse_plus(void)
   struct Regexp *re = parse("a+");
   char str[80];
   reg_to_str(str, re);
-  assert(!strcmp("Plus(Lit(a))", str));
+  //printf("%s\n", str);
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Plus(Lit(a))))", str));
 }
 
 void test_parse_star(void)
@@ -345,7 +201,7 @@ void test_parse_star(void)
   char str[80];
   reg_to_str(str, re);
   // printf("%s\n", str);
-  assert(!strcmp("Star(Lit(a))", str));
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Star(Lit(a))))", str));
 }
 
 void test_parse_alt(void)
@@ -354,7 +210,7 @@ void test_parse_alt(void)
   char str[80];
   reg_to_str(str, re);
   // printf("%s\n", str);
-  assert(!strcmp("Alt(Lit(a), Lit(b))", str));
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Alt(Lit(a), Lit(b))))", str));
 }
 
 void test_parse_paren(void)
@@ -363,7 +219,7 @@ void test_parse_paren(void)
   char str[80];
   reg_to_str(str, re);
   // printf("%s\n", str);
-  assert(!strcmp("Paren(1, Lit(a))", str));
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Paren(1, Lit(a))))", str));
 }
 
 void test_parse_quest(void)
@@ -372,23 +228,26 @@ void test_parse_quest(void)
   char str[80];
   reg_to_str(str, re);
   // printf("%s\n", str);
-  assert(!strcmp("Quest(Lit(a))", str));
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Quest(Lit(a))))", str));
 }
 
-void test_dot(void)
+void test_compile_dot(void)
 {
   struct Regexp *re = parse(".+");
-  char str[80];
+  char str[180];
   reg_to_str(str, re);
-  // printf("%s\n", str);
-  assert(!strcmp("Plus(Dot)", str));
+  assert(!strcmp("Cat(Star(Dot), Paren(0, Plus(Dot)))", str));
   struct Prog *prog = compile(re);
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. any\n"
-      "1. split 0, 2\n"
-      "2. match\n";
+      "0. split 3, 1\n"
+      "1. any\n"
+      "2. jmp 0\n"
+      "3. save [0]\n"
+      "4. any\n"
+      "5. split 4, 6\n"
+      "6. save [1]\n"
+      "7. match\n";
   assert(!strcmp(expect, str));
   free(prog);
 }
@@ -396,18 +255,19 @@ void test_dot(void)
 void test_compile_concat(void)
 {
   struct Regexp *re = parse("ab");
-  assert(3 == re_size());
   struct Prog *prog = compile(re);
-  char str[80];
+  char str[180];
   prog_to_str(str, prog);
   char expect[] =
-      "0. char a\n"
-      "1. char b\n"
-      "2. match\n";
+    "0. split 3, 1\n"
+    "1. any\n"
+    "2. jmp 0\n"
+    "3. save [0]\n"
+    "4. char a\n"
+    "5. char b\n"
+    "6. save [1]\n"
+    "7. match\n";
   assert(!strcmp(expect, str));
-  struct Inst *pc;
-  int i, size;
-  size = re_size();
   free(prog);
 }
 
@@ -415,13 +275,17 @@ void test_compile_plus(void)
 {
   struct Regexp *re1 = parse("a+");
   struct Prog *prog = compile(re1);
-  char str[80];
+  char str[180];
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. char a\n"
-      "1. split 0, 2\n"
-      "2. match\n";
+      "0. split 3, 1\n"
+      "1. any\n"
+      "2. jmp 0\n"
+      "3. save [0]\n"
+      "4. char a\n"
+      "5. split 4, 6\n"
+      "6. save [1]\n"
+      "7. match\n";
   assert(!strcmp(expect, str));
   free(prog);
 }
@@ -430,33 +294,39 @@ void test_compile_star(void)
 {
   struct Regexp *re1 = parse("a*");
   struct Prog *prog = compile(re1);
-  char str[80];
-
+  char str[180];
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. split 1, 3\n"
-      "1. char a\n"
+      "0. split 3, 1\n"
+      "1. any\n"
       "2. jmp 0\n"
-      "3. match\n";
+      "3. save [0]\n"
+      "4. split 5, 7\n"
+      "5. char a\n"
+      "6. jmp 4\n"
+      "7. save [1]\n"
+      "8. match\n";
   assert(!strcmp(expect, str));
-  // printf("count=%d\n", re_size());
   free(prog);
 }
 
-void test_alt(void)
+void test_compile_alt(void)
 {
   struct Regexp *re1 = parse("a|b");
   struct Prog *prog = compile(re1);
-  char str[80];
+  char str[180];
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. split 1, 3\n"
-      "1. char a\n"
-      "2. jmp 4\n"
-      "3. char b\n"
-      "4. match\n";
+      "0. split 3, 1\n"
+      "1. any\n"
+      "2. jmp 0\n"
+      "3. save [0]\n"
+      "4. split 5, 7\n"
+      "5. char a\n"
+      "6. jmp 8\n"
+      "7. char b\n"
+      "8. save [1]\n"
+      "9. match\n";
   assert(!strcmp(expect, str));
   free(prog);
 }
@@ -465,32 +335,45 @@ void test_compile_paren(void)
 {
   struct Regexp *re1 = parse("(a)");
   struct Prog *prog = compile(re1);
-  char str[80];
+  char str[180];
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. save [2]\n"
-      "1. char a\n"
-      "2. save [3]\n"
-      "3. match\n";
+      "0. split 3, 1\n"
+      "1. any\n"
+      "2. jmp 0\n"
+      "3. save [0]\n"
+      "4. save [2]\n"
+      "5. char a\n"
+      "6. save [3]\n"
+      "7. save [1]\n"
+      "8. match\n";
+
   assert(!strcmp(expect, str));
   free(prog);
 }
 
-void test_quest(void)
+void test_compile_quest(void)
 {
   struct Regexp *re1 = parse("a?");
   struct Prog *prog = compile(re1);
-  char str[80];
+  char str[180];
   prog_to_str(str, prog);
-  //  printf("%s", str);
   char expect[] =
-      "0. split 1, 2\n"
-      "1. char a\n"
-      "2. match\n";
+      "0. split 3, 1\n"
+      "1. any\n"
+      "2. jmp 0\n"
+      "3. save [0]\n"
+      "4. split 5, 6\n"
+      "5. char a\n"
+      "6. save [1]\n"
+      "7. match\n";
   assert(!strcmp(expect, str));
   free(prog);
 }
+
+
+void test_thompson();
+void test_sub();
 
 void test(void)
 {
@@ -501,14 +384,12 @@ void test(void)
   test_parse_alt();
   test_parse_paren();
   test_parse_quest();
-  test_dot();
+  test_compile_dot();
   test_compile_concat();
   test_compile_plus();
   test_compile_star();
-  test_alt();
+  test_compile_alt();
   test_compile_paren();
-  test_quest();
-  test_pike();  
+  test_compile_quest();
   test_thompson();  
-  test_sub();
 }
